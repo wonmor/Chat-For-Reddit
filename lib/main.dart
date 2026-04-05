@@ -1,12 +1,16 @@
 import 'package:chat_firebase/pages/root.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'theme/color.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
   runApp(MyApp());
 }
 
@@ -14,11 +18,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Chat for Reddit',
-        theme: ThemeData(
-          primaryColor: primary,
+      debugShowCheckedModeBanner: false,
+      title: 'Chat for Reddit',
+      theme: ThemeData(
+        primaryColor: primary,
+        scaffoldBackgroundColor: appBgColor,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: appBgColor,
+          elevation: 0,
+          iconTheme: IconThemeData(color: primary),
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        home: RootApp());
+      ),
+      home: RootApp(),
+    );
   }
 }

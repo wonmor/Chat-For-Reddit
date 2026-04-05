@@ -1,77 +1,57 @@
-
 import 'package:flutter/material.dart';
 
 class SettingItem extends StatelessWidget {
+  final String title;
   final IconData? leadingIcon;
   final Color? leadingIconColor;
-  final String title;
   final GestureTapCallback? onTap;
-  const SettingItem({ Key? key, required this.title, this.onTap, this.leadingIcon, this.leadingIconColor = Colors.white}) : super(key: key);
+
+  const SettingItem({
+    Key? key,
+    required this.title,
+    this.leadingIcon,
+    this.leadingIconColor,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.only(left: 15, right: 15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Theme.of(context).cardColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 1,
-                  offset: Offset(1, 1), // changes position of shadow
-                ),
-              ],
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.08),
+              spreadRadius: 1,
+              blurRadius: 2,
+              offset: const Offset(0, 1),
             ),
-        child: Container(
-          padding: const EdgeInsets.only(top: 10, bottom: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: leadingIcon != null ?
-            [
+          ],
+        ),
+        child: Row(
+          children: [
+            if (leadingIcon != null)
               Container(
-                padding: EdgeInsets.all(7),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: leadingIconColor!.withAlpha(50),
-                  borderRadius: BorderRadius.circular(5)
+                  color: (leadingIconColor ?? Colors.grey).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  leadingIcon,
-                  size: 24,
-                  color: leadingIconColor,
-                ),
+                child: Icon(leadingIcon, color: leadingIconColor, size: 20),
               ),
-              SizedBox(width: 10,),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(fontSize: 15),
-                ),
+            if (leadingIcon != null) const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.black,
-                size: 14,
-              )
-            ]
-            :
-            [
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.black,
-                size: 14,
-              )
-            ],
-          ),
+            ),
+            Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 22),
+          ],
         ),
       ),
     );

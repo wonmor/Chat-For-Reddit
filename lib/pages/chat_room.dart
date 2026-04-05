@@ -1,126 +1,171 @@
-import 'package:chat_firebase/model/message.dart';
-import 'package:chat_firebase/services/message.dart';
+import 'package:chat_firebase/model/reddit_comment.dart';
+import 'package:chat_firebase/model/reddit_post.dart';
+import 'package:chat_firebase/services/reddit_service.dart';
 import 'package:chat_firebase/theme/color.dart';
 import 'package:chat_firebase/widgets/chat_room_box.dart';
-import 'package:chat_firebase/widgets/custom_dialog.dart';
-import 'package:chat_firebase/widgets/custom_textfield.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoomPage extends StatefulWidget {
-  ChatRoomPage({ Key? key, required this.roomData }) : super(key: key);
-  final roomData;
+  final RedditPost post;
+
+  const ChatRoomPage({Key? key, required this.post}) : super(key: key);
+
   @override
   _ChatRoomPageState createState() => _ChatRoomPageState();
 }
 
 class _ChatRoomPageState extends State<ChatRoomPage> {
-  TextEditingController messageController = TextEditingController();
-  bool isLoading = false;
-  MessageService service = MessageService();
+  final RedditService _redditService = RedditService();
+  List<RedditComment> _comments = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadComments();
+  }
+
+  Future<void> _loadComments() async {
+    setState(() => _isLoading = true);
+    final comments = await _redditService.fetchComments(widget.post.permalink);
+    setState(() {
+      _comments = comments;
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: appBgColor,
+      backgroundColor: const Color(0xFFEFEFF4),
       appBar: AppBar(
-        title: 
-          Column(
-            children: [
-              Text("Flutter Community"),
+        backgroundColor: const Color(0xFFF9F9F9),
+        elevation: 0.5,
+        leading: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Row(
+            children: const [
+              SizedBox(width: 8),
+              Icon(Icons.arrow_back_ios, size: 20, color: primary),
             ],
           ),
-      ),
-      body:  SingleChildScrollView(
-        reverse: true,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 15, bottom: 90),
-          child: getChats()
         ),
+        title: Column(
+          children: [
+            Text(
+              'u/${widget.post.author}',
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              'r/${widget.post.subreddit}',
+              style: TextStyle(
+                color: Colors.grey.shade500,
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: _buildAvatar(widget.post.author, 32),
+          ),
+        ],
       ),
-      floatingActionButton: getBottom(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: primary))
+          : ListView.builder(
+              padding: const EdgeInsets.fromLTRB(8, 12, 8, 24),
+              itemCount: _comments.length + 1, // +1 for the OP post
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  // OP's post as the first blue bubble
+                  return _buildOpBubble();
+                }
+                final comment = _comments[index - 1];
+                return MessageBubble(
+                  comment: comment,
+                  isOp: comment.author == widget.post.author,
+                );
+              },
+            ),
     );
   }
 
-  getChats(){
-    return StreamBuilder<QuerySnapshot>(
-      stream: service.getMessageStream(10),
-      builder: (context, snapshot){
-        if(!snapshot.hasData) {
-          return Container();
-        }
-        var data = snapshot.data!.docs;
-        print(data.length);
-      //  return ListView.builder(itemBuilder: (context, index) {
-      //    var msg = Message.fromJson(data[index].data() as Map<String, dynamic>);
-      //    return ChatRoomBox(message: msg);
-      //  }, shrinkWrap: true, itemCount: data.length);
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(data.length, (index) { 
-          var msg = Message.fromJson(data[index].data() as Map<String, dynamic>);
-          return ChatRoomBox(message: msg);
-        }),
-      );
-    });
-  }
+  Widget _buildOpBubble() {
+    final text = widget.post.selftext.isNotEmpty
+        ? '${widget.post.title}\n\n${widget.post.selftext}'
+        : widget.post.title;
 
-  getBottom(){
-    return 
-      Container(
-        padding: EdgeInsets.only(left: 0, right: 5),
-        margin: EdgeInsets.only(left: 10, right: 10),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(20)
-        ),
-        child: Row(children: [
-          IconButton(
-            onPressed: () {
-            },
-            icon: Icon(Icons.add, color: primary, size: 30,)
-          ),
-          Expanded(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const SizedBox(width: 60),
+          Flexible(
             child: Container(
-              child: CustomTextField(
-                controller: messageController,
-                hintText: "Write your message",
-              )
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: const BoxDecoration(
+                color: senderBubbleColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(18),
+                  topRight: Radius.circular(18),
+                  bottomLeft: Radius.circular(18),
+                  bottomRight: Radius.circular(4),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      color: senderTextColor,
+                      fontSize: 16,
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${widget.post.score} pts',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          IconButton(
-            onPressed: () {
-              sendMessage();
-            },
-            icon: Icon(Icons.send_rounded, color: isLoading ? Colors.grey : primary, size: 35,)
-          )
-        ],),
-      );
+        ],
+      ),
+    );
   }
 
-  sendMessage() async{
-    if(isLoading) return;
-    setState(() {
-      isLoading = true;
-    });
+  Widget _buildAvatar(String username, double size) {
+    final colorIndex = username.hashCode.abs() % subredditColors.length;
+    final color = subredditColors[colorIndex];
+    final initial = username.isNotEmpty ? username[0].toUpperCase() : '?';
 
-    var res = await service.sendMessage(messageController.text);
-
-    setState(() {
-      isLoading = false;
-    });
-    if(res["status"] == true){
-      messageController.clear();
-    }else{
-      showDialog(
-        context: context,
-        builder: (BuildContext context){
-        return CustomDialogBox(title: "Chat", descriptions: res["message"],);
-        }
-      );
-    }
+    return CircleAvatar(
+      radius: size / 2,
+      backgroundColor: color,
+      child: Text(
+        initial,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: size * 0.4,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
-
 }
