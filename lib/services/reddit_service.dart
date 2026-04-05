@@ -1,17 +1,38 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:chat_firebase/model/reddit_post.dart';
 import 'package:chat_firebase/model/reddit_comment.dart';
 
 class RedditService {
-  static const String _baseUrl = 'https://www.reddit.com';
-  static const Map<String, String> _headers = {
-    'User-Agent': 'ChatForReddit/1.0',
-  };
+  static const String _redditUrl = 'https://www.reddit.com';
+  // CORS proxy for web platform
+  static const String _corsProxy = 'https://corsproxy.io/?';
+
+  static String get _baseUrl {
+    if (kIsWeb) {
+      return '$_corsProxy${Uri.encodeComponent(_redditUrl)}';
+    }
+    return _redditUrl;
+  }
+
+  static Map<String, String> get _headers {
+    if (kIsWeb) {
+      return {};
+    }
+    return {'User-Agent': 'ChatForReddit/1.0'};
+  }
+
+  String _buildUrl(String path) {
+    if (kIsWeb) {
+      return '$_corsProxy${Uri.encodeComponent('$_redditUrl$path')}';
+    }
+    return '$_redditUrl$path';
+  }
 
   /// Fetch hot posts from a subreddit
   Future<List<RedditPost>> fetchPosts(String subreddit, {int limit = 25}) async {
-    final url = '$_baseUrl/r/$subreddit/hot.json?limit=$limit';
+    final url = _buildUrl('/r/$subreddit/hot.json?limit=$limit');
     try {
       final response = await http.get(Uri.parse(url), headers: _headers);
       if (response.statusCode == 200) {
@@ -21,6 +42,8 @@ class RedditService {
             .where((child) => child['kind'] == 't3')
             .map((child) => RedditPost.fromJson(child['data']))
             .toList();
+      } else {
+        print('Error: HTTP ${response.statusCode}');
       }
     } catch (e) {
       print('Error fetching posts: $e');
@@ -35,7 +58,7 @@ class RedditService {
 
   /// Fetch comments for a post
   Future<List<RedditComment>> fetchComments(String permalink) async {
-    final url = '$_baseUrl${permalink}.json?limit=50';
+    final url = _buildUrl('${permalink}.json?limit=50');
     try {
       final response = await http.get(Uri.parse(url), headers: _headers);
       if (response.statusCode == 200) {
@@ -74,7 +97,7 @@ class RedditService {
 
   /// Search for subreddits
   Future<List<Map<String, String>>> searchSubreddits(String query) async {
-    final url = '$_baseUrl/subreddits/search.json?q=$query&limit=10';
+    final url = _buildUrl('/subreddits/search.json?q=$query&limit=10');
     try {
       final response = await http.get(Uri.parse(url), headers: _headers);
       if (response.statusCode == 200) {
