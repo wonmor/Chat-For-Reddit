@@ -10,8 +10,6 @@ const DEFAULT_SUBREDDITS = [
   "science", "gaming", "movies", "technology", "pics",
 ];
 
-const CORS_PROXY = "https://corsproxy.io/?";
-
 export default function HomePage() {
   const [posts, setPosts] = useState<RedditPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,26 +23,13 @@ export default function HomePage() {
     setLoading(true);
     setError("");
     try {
-      const url = `${CORS_PROXY}${encodeURIComponent("https://www.reddit.com/r/popular/hot.json?limit=30")}`;
-      const res = await fetch(url);
-      const json = await res.json();
-      const items: RedditPost[] = json.data.children
-        .filter((c: any) => c.kind === "t3")
-        .map((c: any) => ({
-          id: c.data.id,
-          title: c.data.title,
-          author: c.data.author,
-          subreddit: c.data.subreddit,
-          selftext: c.data.selftext || "",
-          permalink: c.data.permalink,
-          thumbnail: c.data.thumbnail,
-          score: c.data.score,
-          numComments: c.data.num_comments,
-          createdAt: c.data.created_utc,
-        }));
+      const res = await fetch("/api/reddit?type=posts&subreddit=popular");
+      if (!res.ok) throw new Error("API error");
+      const items = await res.json();
+      if (items.error) throw new Error(items.error);
       setPosts(items);
-    } catch (e) {
-      setError("Failed to load posts. Pull to refresh.");
+    } catch (e: any) {
+      setError(e.message || "Failed to load posts");
     }
     setLoading(false);
   }

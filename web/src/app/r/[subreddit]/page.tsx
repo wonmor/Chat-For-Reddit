@@ -6,8 +6,6 @@ import { RedditPost } from "@/lib/reddit";
 import PostRow from "@/components/PostRow";
 import Link from "next/link";
 
-const CORS_PROXY = "https://corsproxy.io/?";
-
 export default function SubredditPage() {
   const params = useParams();
   const subreddit = params.subreddit as string;
@@ -21,23 +19,10 @@ export default function SubredditPage() {
   async function loadPosts() {
     setLoading(true);
     try {
-      const url = `${CORS_PROXY}${encodeURIComponent(`https://www.reddit.com/r/${subreddit}/hot.json?limit=30`)}`;
-      const res = await fetch(url);
-      const json = await res.json();
-      const items: RedditPost[] = json.data.children
-        .filter((c: any) => c.kind === "t3")
-        .map((c: any) => ({
-          id: c.data.id,
-          title: c.data.title,
-          author: c.data.author,
-          subreddit: c.data.subreddit,
-          selftext: c.data.selftext || "",
-          permalink: c.data.permalink,
-          thumbnail: c.data.thumbnail,
-          score: c.data.score,
-          numComments: c.data.num_comments,
-          createdAt: c.data.created_utc,
-        }));
+      const res = await fetch(`/api/reddit?type=posts&subreddit=${encodeURIComponent(subreddit)}`);
+      if (!res.ok) throw new Error();
+      const items = await res.json();
+      if (items.error) throw new Error();
       setPosts(items);
     } catch {
       setPosts([]);

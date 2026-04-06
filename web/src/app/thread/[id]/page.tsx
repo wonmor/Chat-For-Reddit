@@ -7,29 +7,6 @@ import { OpBubble, CommentBubble } from "@/components/MessageBubble";
 import Avatar from "@/components/Avatar";
 import Link from "next/link";
 
-const CORS_PROXY = "https://corsproxy.io/?";
-
-function parseComments(children: any[], depth: number): RedditComment[] {
-  const comments: RedditComment[] = [];
-  for (const child of children) {
-    if (child.kind !== "t1") continue;
-    const d = child.data;
-    if (!d) continue;
-    comments.push({
-      id: d.id,
-      author: d.author,
-      body: d.body,
-      score: d.score,
-      createdAt: d.created_utc,
-      depth,
-    });
-    if (d.replies?.data?.children) {
-      comments.push(...parseComments(d.replies.data.children, depth + 1));
-    }
-  }
-  return comments;
-}
-
 export default function ThreadPage() {
   const searchParams = useSearchParams();
   const permalink = searchParams.get("permalink") || "";
@@ -45,26 +22,12 @@ export default function ThreadPage() {
   async function loadThread() {
     setLoading(true);
     try {
-      const url = `${CORS_PROXY}${encodeURIComponent(`https://www.reddit.com${permalink}.json?limit=50`)}`;
-      const res = await fetch(url);
-      const json = await res.json();
-
-      const postData = json[0].data.children[0].data;
-      setPost({
-        id: postData.id,
-        title: postData.title,
-        author: postData.author,
-        subreddit: postData.subreddit,
-        selftext: postData.selftext || "",
-        permalink: postData.permalink,
-        thumbnail: postData.thumbnail,
-        score: postData.score,
-        numComments: postData.num_comments,
-        createdAt: postData.created_utc,
-      });
-
-      const commentData = json[1].data.children;
-      setComments(parseComments(commentData, 0));
+      const res = await fetch(`/api/reddit?type=comments&permalink=${encodeURIComponent(permalink)}`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (data.error) throw new Error();
+      setPost(data.post);
+      setComments(data.comments);
     } catch {
       setPost(null);
       setComments([]);
