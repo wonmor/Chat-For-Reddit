@@ -22,7 +22,7 @@ async function getAccessToken(): Promise<string> {
     headers: {
       Authorization: `Basic ${auth}`,
       "Content-Type": "application/x-www-form-urlencoded",
-      "User-Agent": "ChatForReddit/1.0",
+      "User-Agent": "SubChat/1.0",
     },
     body: "grant_type=client_credentials",
   });
@@ -43,7 +43,7 @@ async function redditApiFetch(path: string): Promise<any> {
   const res = await fetch(`https://oauth.reddit.com${path}`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "User-Agent": "ChatForReddit/1.0",
+      "User-Agent": "SubChat/1.0",
     },
   });
 

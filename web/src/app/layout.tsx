@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Chat for Reddit",
+  title: "SubChat",
   description: "iMessage-style Reddit browser",
 };
 

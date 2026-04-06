@@ -20,7 +20,7 @@ class RedditService {
     if (kIsWeb) {
       return {};
     }
-    return {'User-Agent': 'ChatForReddit/1.0'};
+    return {'User-Agent': 'SubChat/1.0'};
   }
 
   String _buildUrl(String path) {

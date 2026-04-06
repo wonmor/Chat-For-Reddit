@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Chat for Reddit',
+      title: 'SubChat',
       theme: ThemeData(
         primaryColor: primary,
         scaffoldBackgroundColor: appBgColor,
