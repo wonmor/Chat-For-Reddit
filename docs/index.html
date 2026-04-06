@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat for Reddit - iMessage-style Reddit Browser</title>
+  <style>
+    :root {
+      --blue: #007AFF;
+      --gray: #E5E5EA;
+      --bg: #F2F2F7;
+      --dark: #1C1C1E;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--dark);
+      background: #fff;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: var(--blue); }
+
+    /* Nav */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid #e5e5e5;
+      padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-size: 18px; font-weight: 700; color: var(--dark);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo .icon {
+      width: 32px; height: 32px; background: var(--blue); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 18px;
+    }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: #555; }
+    .nav-links a:hover { color: var(--blue); }
+
+    /* Hero */
+    .hero {
+      padding: 140px 24px 80px;
+      text-align: center;
+      background: linear-gradient(180deg, #f8f9ff 0%, #fff 100%);
+    }
+    .hero h1 {
+      font-size: 52px; font-weight: 800; letter-spacing: -1px;
+      line-height: 1.1; margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--blue); }
+    .hero p {
+      font-size: 20px; color: #666; max-width: 520px;
+      margin: 0 auto 32px; line-height: 1.5;
+    }
+    .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 14px; font-size: 16px; font-weight: 600;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-secondary { background: var(--bg); color: var(--dark); }
+
+    /* Phone mockup */
+    .phone-container { display: flex; justify-content: center; padding: 0 24px 80px; }
+    .phone {
+      width: 300px; border-radius: 36px; overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.12);
+      border: 8px solid #1c1c1e; background: white;
+    }
+    .phone-header {
+      background: white; padding: 40px 16px 12px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .phone-header h2 { font-size: 28px; font-weight: 700; }
+    .phone-search {
+      margin-top: 10px; background: var(--bg); border-radius: 10px;
+      padding: 8px 12px; font-size: 14px; color: #999;
+    }
+    .phone-body { padding: 0; }
+    .phone-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px; border-bottom: 1px solid #f0f0f0;
+    }
+    .phone-avatar {
+      width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 600; font-size: 16px;
+    }
+    .phone-text { flex: 1; min-width: 0; }
+    .phone-text .name { font-size: 15px; font-weight: 600; }
+    .phone-text .preview { font-size: 13px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .phone-time { font-size: 12px; color: #bbb; flex-shrink: 0; }
+
+    /* Features */
+    .features {
+      padding: 80px 24px; max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 32px;
+    }
+    .feature {
+      padding: 28px; border-radius: 20px; background: var(--bg);
+    }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 14px; background: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin-bottom: 16px;
+    }
+    .feature h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .feature p { font-size: 15px; color: #666; line-height: 1.5; }
+
+    /* Footer */
+    footer {
+      padding: 40px 24px; text-align: center;
+      border-top: 1px solid #e5e5e5; color: #999; font-size: 14px;
+    }
+    footer a { color: var(--blue); }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 12px; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 36px; }
+      .hero p { font-size: 17px; }
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo">
+      <div class="icon">R</div>
+      Chat for Reddit
+    </div>
+    <div class="nav-links">
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>Reddit, but make it <span>iMessage</span></h1>
+    <p>Browse Reddit threads as beautiful chat conversations. Every post becomes a thread, every comment a message bubble.</p>
+    <div class="hero-buttons">
+      <a href="#" class="btn btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        App Store
+      </a>
+      <a href="https://github.com/wonmor/Chat-For-Reddit" class="btn btn-secondary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </section>
+
+  <div class="phone-container">
+    <div class="phone">
+      <div class="phone-header">
+        <h2>Messages</h2>
+        <div class="phone-search">Search</div>
+      </div>
+      <div class="phone-body">
+        <div class="phone-row">
+          <div class="phone-avatar" style="background:#FF6B35">A</div>
+          <div class="phone-text">
+            <div class="name">r/AskReddit</div>
+            <div class="preview">What's a fact that sounds fake but is actually true?</div>
+          </div>
+          <div class="phone-time">2m</div>
+        </div>
+        <div class="phone-row">
+          <div class="phone-avatar" style="background:#007AFF">W</div>
+          <div class="phone-text">
+            <div class="name">r/worldnews</div>
+            <div class="preview">Scientists discover high temp superconductor...</div>
+          </div>
+          <div class="phone-time">15m</div>
+        </div>
+        <div class="phone-row">
+          <div class="phone-avatar" style="background:#34C759">T</div>
+          <div class="phone-text">
+            <div class="name">r/technology</div>
+            <div class="preview">OpenAI announces new breakthrough in...</div>
+          </div>
+          <div class="phone-time">1h</div>
+        </div>
+        <div class="phone-row">
+          <div class="phone-avatar" style="background:#AF52DE">G</div>
+          <div class="phone-text">
+            <div class="name">r/gaming</div>
+            <div class="preview">This hidden detail in Zelda blew my mind</div>
+          </div>
+          <div class="phone-time">3h</div>
+        </div>
+        <div class="phone-row">
+          <div class="phone-avatar" style="background:#FF2D55">F</div>
+          <div class="phone-text">
+            <div class="name">r/funny</div>
+            <div class="preview">My cat discovered the mirror today...</div>
+          </div>
+          <div class="phone-time">5h</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="features">
+    <div class="feature">
+      <div class="feature-icon">💬</div>
+      <h3>Chat-style Browsing</h3>
+      <p>Reddit threads become iMessage conversations. OP posts appear as blue bubbles, comments as gray bubbles.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <h3>Fast &amp; Lightweight</h3>
+      <p>No Reddit account needed. Scrapes the public JSON API for instant access to any subreddit or thread.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔒</div>
+      <h3>Privacy First</h3>
+      <p>No tracking, no ads, no data collection. Your browsing stays on your device. Period.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="support.html">Support</a>
+      <a href="https://github.com/wonmor/Chat-For-Reddit">GitHub</a>
+    </div>
+    <p>&copy; 2026 John Seong. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

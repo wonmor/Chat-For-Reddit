@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Chat for Reddit</title>
+  <style>
+    :root { --blue: #007AFF; --dark: #1C1C1E; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--dark); background: #fff; -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid #e5e5e5; padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-size: 18px; font-weight: 700; color: var(--dark);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo .icon {
+      width: 32px; height: 32px; background: var(--blue); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 18px;
+    }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: #555; }
+    .nav-links a:hover { color: var(--blue); }
+    .content {
+      max-width: 720px; margin: 0 auto; padding: 120px 24px 80px;
+    }
+    h1 { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
+    .date { color: #888; font-size: 14px; margin-bottom: 40px; }
+    h2 { font-size: 22px; font-weight: 700; margin: 32px 0 12px; }
+    p, li { font-size: 16px; line-height: 1.7; color: #444; margin-bottom: 12px; }
+    ul { padding-left: 24px; }
+    footer {
+      padding: 40px 24px; text-align: center;
+      border-top: 1px solid #e5e5e5; color: #999; font-size: 14px;
+    }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <div class="icon">R</div>
+      Chat for Reddit
+    </a>
+    <div class="nav-links">
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+    </div>
+  </nav>
+
+  <div class="content">
+    <h1>Privacy Policy</h1>
+    <p class="date">Effective date: April 5, 2026</p>
+
+    <h2>Overview</h2>
+    <p>Chat for Reddit ("the App") is committed to protecting your privacy. This policy explains what information we collect, how we use it, and your rights regarding your data.</p>
+
+    <h2>Information We Collect</h2>
+    <p><strong>We do not collect any personal information.</strong> The App does not require you to create an account, log in, or provide any personal data.</p>
+    <p>Specifically, the App:</p>
+    <ul>
+      <li>Does <strong>not</strong> collect your name, email address, or any other identifying information</li>
+      <li>Does <strong>not</strong> track your location</li>
+      <li>Does <strong>not</strong> use cookies or tracking technologies</li>
+      <li>Does <strong>not</strong> store your browsing history on any server</li>
+      <li>Does <strong>not</strong> share any data with third parties</li>
+      <li>Does <strong>not</strong> contain any advertising or analytics SDKs</li>
+    </ul>
+
+    <h2>How the App Works</h2>
+    <p>The App fetches publicly available data from Reddit's public JSON API. This data includes post titles, comment text, usernames, scores, and timestamps&mdash;all of which are publicly accessible on reddit.com. No Reddit authentication is required or used.</p>
+
+    <h2>Data Storage</h2>
+    <p>All data is fetched in real-time and displayed on your device. No data is stored on external servers. Any cached data remains on your device and can be cleared by uninstalling the App.</p>
+
+    <h2>Third-Party Services</h2>
+    <p>The App connects to the following third-party services:</p>
+    <ul>
+      <li><strong>Reddit (reddit.com)</strong> &mdash; to fetch publicly available post and comment data via their public JSON endpoints</li>
+    </ul>
+    <p>Please refer to <a href="https://www.reddit.com/policies/privacy-policy">Reddit's Privacy Policy</a> for information on how Reddit handles data on their platform.</p>
+
+    <h2>Children's Privacy</h2>
+    <p>The App does not knowingly collect information from children under the age of 13. Reddit's content is user-generated and may not be suitable for children. Parental guidance is recommended.</p>
+
+    <h2>Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated effective date.</p>
+
+    <h2>Contact</h2>
+    <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+    <p><a href="mailto:john@johnseong.com">john@johnseong.com</a></p>
+    <p>Or open an issue on our <a href="https://github.com/wonmor/Chat-For-Reddit/issues">GitHub repository</a>.</p>
+  </div>
+
+  <footer>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="support.html">Support</a>
+    </div>
+    <p>&copy; 2026 John Seong. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

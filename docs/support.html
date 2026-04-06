@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support - Chat for Reddit</title>
+  <style>
+    :root { --blue: #007AFF; --dark: #1C1C1E; --bg: #F2F2F7; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--dark); background: #fff; -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid #e5e5e5; padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-size: 18px; font-weight: 700; color: var(--dark);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo .icon {
+      width: 32px; height: 32px; background: var(--blue); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 18px;
+    }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: #555; }
+    .nav-links a:hover { color: var(--blue); }
+    .content {
+      max-width: 720px; margin: 0 auto; padding: 120px 24px 80px;
+    }
+    h1 { font-size: 36px; font-weight: 800; margin-bottom: 8px; }
+    .subtitle { color: #888; font-size: 17px; margin-bottom: 40px; }
+    h2 { font-size: 22px; font-weight: 700; margin: 32px 0 12px; }
+    p, li { font-size: 16px; line-height: 1.7; color: #444; margin-bottom: 12px; }
+
+    .contact-cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin: 24px 0 40px;
+    }
+    .contact-card {
+      padding: 24px; border-radius: 16px; background: var(--bg);
+      text-align: center; transition: transform 0.15s;
+    }
+    .contact-card:hover { transform: translateY(-2px); }
+    .contact-card .icon { font-size: 32px; margin-bottom: 12px; }
+    .contact-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .contact-card p { font-size: 14px; color: #666; margin: 0; }
+
+    .faq { margin-top: 40px; }
+    .faq-item {
+      border-bottom: 1px solid #e5e5e5; padding: 20px 0;
+    }
+    .faq-item:first-child { border-top: 1px solid #e5e5e5; }
+    .faq-q { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+    .faq-a { font-size: 15px; color: #555; line-height: 1.6; }
+
+    footer {
+      padding: 40px 24px; text-align: center;
+      border-top: 1px solid #e5e5e5; color: #999; font-size: 14px;
+    }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <div class="icon">R</div>
+      Chat for Reddit
+    </a>
+    <div class="nav-links">
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+    </div>
+  </nav>
+
+  <div class="content">
+    <h1>Support</h1>
+    <p class="subtitle">Need help? We're here for you.</p>
+
+    <div class="contact-cards">
+      <a href="mailto:john@johnseong.com" class="contact-card">
+        <div class="icon">&#9993;</div>
+        <h3>Email</h3>
+        <p>john@johnseong.com</p>
+      </a>
+      <a href="https://github.com/wonmor/Chat-For-Reddit/issues" class="contact-card">
+        <div class="icon">&#128030;</div>
+        <h3>Report a Bug</h3>
+        <p>GitHub Issues</p>
+      </a>
+      <a href="https://github.com/wonmor/Chat-For-Reddit" class="contact-card">
+        <div class="icon">&#128187;</div>
+        <h3>Source Code</h3>
+        <p>GitHub Repository</p>
+      </a>
+    </div>
+
+    <div class="faq">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <div class="faq-q">Do I need a Reddit account to use this app?</div>
+        <div class="faq-a">No. Chat for Reddit uses Reddit's public JSON API to fetch posts and comments. No login or Reddit account is required.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Why do some posts show "No posts found"?</div>
+        <div class="faq-a">This usually means there's a network connectivity issue. Make sure you're connected to the internet and try pulling down to refresh. Some subreddits may also be private or quarantined, which prevents access via the public API.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Can I post or comment on Reddit through this app?</div>
+        <div class="faq-a">No. Chat for Reddit is a read-only browser. It displays Reddit content in an iMessage-style interface but does not support posting, commenting, or voting.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Who sees my data?</div>
+        <div class="faq-a">Nobody. The app does not collect, store, or transmit any personal data. All Reddit content is fetched directly to your device. See our <a href="privacy.html">Privacy Policy</a> for full details.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Why do blue bubbles appear on the right?</div>
+        <div class="faq-a">Blue bubbles represent the original poster (OP) of the thread, similar to how iMessage shows your own messages. Gray bubbles on the left represent other commenters.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Is this app affiliated with Reddit?</div>
+        <div class="faq-a">No. Chat for Reddit is an independent, open-source project. It is not affiliated with, endorsed by, or connected to Reddit, Inc.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">The app seems slow or posts aren't loading.</div>
+        <div class="faq-a">Reddit may occasionally rate-limit API requests. Wait a moment and try again. If the problem persists, please <a href="https://github.com/wonmor/Chat-For-Reddit/issues">report it as an issue</a>.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="support.html">Support</a>
+    </div>
+    <p>&copy; 2026 John Seong. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
