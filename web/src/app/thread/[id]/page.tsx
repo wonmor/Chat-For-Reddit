@@ -3,6 +3,8 @@ import { OpBubble, CommentBubble } from "@/components/MessageBubble";
 import Avatar from "@/components/Avatar";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function ThreadPage({
   params,
   searchParams,

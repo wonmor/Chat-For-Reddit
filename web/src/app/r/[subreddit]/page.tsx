@@ -2,6 +2,8 @@ import { fetchPosts } from "@/lib/reddit";
 import PostRow from "@/components/PostRow";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function SubredditPage({
   params,
 }: {

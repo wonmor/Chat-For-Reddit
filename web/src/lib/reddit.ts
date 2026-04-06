@@ -30,7 +30,7 @@ export async function fetchPosts(
   try {
     const res = await fetch(
       `${BASE_URL}/r/${subreddit}/hot.json?limit=${limit}`,
-      { headers: HEADERS, next: { revalidate: 60 } }
+      { headers: HEADERS, cache: "no-store" }
     );
     if (!res.ok) return [];
     const json = await res.json();
@@ -59,7 +59,7 @@ export async function fetchComments(
   try {
     const res = await fetch(`${BASE_URL}${permalink}.json?limit=50`, {
       headers: HEADERS,
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
     if (!res.ok) return { post: {} as RedditPost, comments: [] };
     const json = await res.json();
