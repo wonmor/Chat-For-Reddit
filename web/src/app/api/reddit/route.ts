@@ -1,26 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const UA =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+// Run on Vercel Edge (Cloudflare network) — different IPs than serverless
+export const runtime = "edge";
 
-async function redditFetch(path: string) {
-  const res = await fetch(`https://old.reddit.com${path}`, {
-    headers: {
-      "User-Agent": UA,
-      Accept: "application/json",
-    },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    // fallback to www
-    const res2 = await fetch(`https://www.reddit.com${path}`, {
-      headers: { "User-Agent": UA, Accept: "application/json" },
-      cache: "no-store",
-    });
-    if (!res2.ok) throw new Error(`Reddit returned ${res2.status}`);
-    return res2.json();
+const HEADERS: Record<string, string> = {
+  "User-Agent":
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+  "Accept-Language": "en-US,en;q=0.9",
+};
+
+const ENDPOINTS = [
+  "https://www.reddit.com",
+  "https://old.reddit.com",
+];
+
+async function redditFetch(path: string): Promise<any> {
+  let lastError = "";
+
+  for (const base of ENDPOINTS) {
+    try {
+      const res = await fetch(`${base}${path}`, { headers: HEADERS });
+      if (res.ok) {
+        return await res.json();
+      }
+      lastError = `${base} returned ${res.status}`;
+    } catch (e: any) {
+      lastError = `${base}: ${e.message}`;
+    }
   }
-  return res.json();
+
+  throw new Error(lastError);
 }
 
 function parsePosts(json: any) {
@@ -69,12 +79,16 @@ export async function GET(req: NextRequest) {
 
   try {
     if (type === "posts" && subreddit) {
-      const json = await redditFetch(`/r/${subreddit}/hot.json?limit=30&raw_json=1`);
+      const json = await redditFetch(
+        `/r/${subreddit}/hot.json?limit=30&raw_json=1`
+      );
       return NextResponse.json(parsePosts(json));
     }
 
     if (type === "comments" && permalink) {
-      const json = await redditFetch(`${permalink}.json?limit=50&raw_json=1`);
+      const json = await redditFetch(
+        `${permalink}.json?limit=50&raw_json=1`
+      );
       const postData = json[0].data.children[0].data;
       const post = {
         id: postData.id,
