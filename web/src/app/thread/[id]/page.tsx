@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { RedditPost, RedditComment } from "@/lib/reddit";
+import { clientFetchThread } from "@/lib/client-reddit";
 import { OpBubble, CommentBubble } from "@/components/MessageBubble";
 import Avatar from "@/components/Avatar";
 import Link from "next/link";
@@ -22,10 +23,7 @@ export default function ThreadPage() {
   async function loadThread() {
     setLoading(true);
     try {
-      const res = await fetch(`/api/reddit?type=comments&permalink=${encodeURIComponent(permalink)}`);
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      if (data.error) throw new Error();
+      const data = await clientFetchThread(permalink);
       setPost(data.post);
       setComments(data.comments);
     } catch {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { RedditPost } from "@/lib/reddit";
+import { clientFetchPosts } from "@/lib/client-reddit";
 import PostRow from "@/components/PostRow";
 import Link from "next/link";
 
@@ -19,11 +20,7 @@ export default function SubredditPage() {
   async function loadPosts() {
     setLoading(true);
     try {
-      const res = await fetch(`/api/reddit?type=posts&subreddit=${encodeURIComponent(subreddit)}`);
-      if (!res.ok) throw new Error();
-      const items = await res.json();
-      if (items.error) throw new Error();
-      setPosts(items);
+      setPosts(await clientFetchPosts(subreddit));
     } catch {
       setPosts([]);
     }

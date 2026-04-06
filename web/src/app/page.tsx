@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { RedditPost } from "@/lib/reddit";
+import { clientFetchPosts } from "@/lib/client-reddit";
 import PostRow from "@/components/PostRow";
 import Link from "next/link";
 
@@ -23,10 +24,7 @@ export default function HomePage() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/reddit?type=posts&subreddit=popular");
-      if (!res.ok) throw new Error("API error");
-      const items = await res.json();
-      if (items.error) throw new Error(items.error);
+      const items = await clientFetchPosts("popular");
       setPosts(items);
     } catch (e: any) {
       setError(e.message || "Failed to load posts");
